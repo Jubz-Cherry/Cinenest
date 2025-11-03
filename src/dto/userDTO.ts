@@ -9,7 +9,4 @@ export class RegisterDTO {
 
   @ApiProperty({ example: '123456', description: 'Senha do usuário' })
   password: string;
-
-  @ApiProperty({ example: 'Vingadores', description: 'Filme' })
-  film: string;
 }
