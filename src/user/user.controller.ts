@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { RegisterDTO } from 'src/dto/userDTO';
+import { RegisterDTO } from 'src/dto/user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('user')
@@ -21,13 +21,13 @@ export class UserController {
   @ApiResponse({ status: 400, description: 'Email já existe' })
   async create(@Body() registerDTO: RegisterDTO) {
     try {
-      await this.userService.createUser(registerDTO);
+      const user = await this.userService.createUser(registerDTO);
       return {
-        message: 'Usuário criado com sucesso',
+        message: 'Usuário criado com sucesso'
       };
     } catch (error) {
       if (error.message === 'Um usuário com este email já existe') {
-        throw new Error('Este email já está em uso');
+        throw new BadRequestException('Este email já está em uso');
       }
       throw error;
     }

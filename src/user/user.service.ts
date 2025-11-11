@@ -1,37 +1,47 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from 'generated/prisma/browser';
-import { RegisterDTO } from 'src/dto/userDTO';
+import { JwtService } from '@nestjs/jwt';
+import { RegisterDTO } from 'src/dto/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService
+  ) {}
 
-    constructor( private prisma : PrismaService) {}
-  
-    async createUser(data: RegisterDTO) {
-        // Verificar se já existe um usuário com este email
-        const existingUser = await this.prisma.user.findUnique({
-            where: {
-                email: data.email
-            }
-        });
+  async createUser(data: RegisterDTO) {
+    // Verifica se já existe um usuário com este email
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
 
-        if (existingUser) {
-            throw new Error('Um usuário com este email já existe');
-        }
-
-        return this.prisma.user.create({
-            data: {
-                email: data.email,
-                name: data.name,
-                password: data.password,
-            },
-        });
+    if (existingUser) {
+      throw new Error('Um usuário com este email já existe');
     }
 
-    async findAll() {
-    return this.prisma.user.findMany();
+    // Cria o usuário
+    const user = await this.prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      },
+    });
+
+    // Gera o token JWT com base no ID e email do usuário
+    const payload = { sub: user.id, email: user.email };
+    const token = this.jwtService.sign(payload);
+
+    // Retorna mensagem, usuário e token
+    return {
+      message: 'Usuário criado com sucesso',
+      user,
+      access_token: token,
+    };
   }
 
-
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
 }
