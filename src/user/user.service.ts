@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDTO } from 'src/dto/login.dto';
 import { RegisterDTO } from 'src/dto/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
+  loginUser(data: LoginDTO) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService
@@ -33,15 +37,19 @@ export class UserService {
     const payload = { sub: user.id, email: user.email };
     const token = this.jwtService.sign(payload);
 
+    // remove a senha do objeto user antes de retornar
+    const { password, ...safeUser } = user;
     // Retorna mensagem, usuário e token
     return {
       message: 'Usuário criado com sucesso',
-      user,
+      user: safeUser,
       access_token: token,
     };
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: { id: true, name: true, email: true, createdAt: true },
+    });
   }
 }

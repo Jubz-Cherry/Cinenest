@@ -2,18 +2,15 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TicketDTO {
   
-  @ApiProperty({ example: "cmhjdmzp90000y2ck0hr6n5ot" })
-  userId: number;
-  
-  @ApiProperty({ example: "Renata Leal" })
-  userName: string;
+  @ApiProperty({ example: "Demon Slayer: Castelo infinito", description: 'Nome do filme' })
+  movieName: string;
 
-  @ApiProperty({ example: 8 })
-  movieId: number;
+  @ApiProperty({ example: "Cinemark Paulista"})
+  cinema: string;
 
-  @ApiProperty({ example: "15/11/2025"})
-  date: String;
+  @ApiProperty({ example: "YYYY-MM-DD", description: 'Data e hora do filme' })
+  date: string | Date;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 2, description: 'Quantidade de ingressos' })
   quantity: number;
 }

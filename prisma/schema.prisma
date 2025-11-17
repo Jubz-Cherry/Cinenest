@@ -21,7 +21,6 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  Ticket Ticket[]
 }
 
 model Movies {
@@ -29,19 +28,16 @@ model Movies {
   title     String
   genre     String
   rating    Float?
-  tickets   Ticket[]
 }
 
 model Ticket {
-  id          Int      @id @default(autoincrement())
-  userId      String
-  movieId     String
-  cinema      String
-  date        DateTime
-  quantity    Int
-  createdAt   DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [id])
-  movie      Movies   @relation(fields: [movieId], references: [id])
+  id        Int      @id @default(autoincrement())
+  movieName String
+  cinema    String
+  date      DateTime
+  quantity  Int
+  createdAt DateTime @default(now())
 }
+
+
 
